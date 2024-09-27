@@ -24,7 +24,7 @@ class ResultTest extends TestCase
 
         $message = match ($suspect->fetch()) {
             R::Ok => R::Ok->grab(),
-            R::Error => R::Ok->grab()
+            R::Error => R::Error->grab()
         };
 
       var_dump($message);
