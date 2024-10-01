@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Denzyl\Result;
 
 use AllowDynamicProperties;
-use Denzyl\Result\Bag;
 use Denzyl\Result\ResultInterface;
 
 /**
@@ -20,10 +19,10 @@ enum R implements ResultInterface
     case Ok;
     case Error;
 
-    public function hold($exception):self
+    public function hold($exception): self
     {
-        $id=  spl_object_hash($exception);
-        Hold::$test[$id]= $exception;
+        $id =  spl_object_hash($exception);
+        Hold::$test[$id] = $exception;
         return $this;
     }
 
@@ -37,9 +36,8 @@ enum R implements ResultInterface
 
 class Hold
 {
-    static array $test = [];
+    public static array $test = [];
     public static function add()
     {
     }
 }
-

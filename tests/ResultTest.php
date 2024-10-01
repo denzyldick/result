@@ -24,10 +24,17 @@ class ResultTest extends TestCase
 
         $message = match ($suspect->fetch()) {
             R::Ok => R::Ok->grab(),
-            R::Error => R::Error->grab()
+            R::Error => function () {
+                $response = R::Error->grab();
+                var_dump($response, "null");
+                return "helloworld";
+            }
         };
 
-      var_dump($message);
+        $actual = "helloworld";
+        $expected = $message();
+
+        $this->assertEquals($expected, $actual);
     }
 }
 
@@ -47,7 +54,7 @@ class Suspect implements Item
      */
     public function baggable()
     {
-        throw new Exception();
+        throw new Exception("Helloworld frmo exception");
         return new ArrayObject([]);
     }
 }
