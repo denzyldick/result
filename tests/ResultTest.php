@@ -1,15 +1,9 @@
 <?php
 
-use Denzyl\Result\Item;
-use Denzyl\Result\R;
-use Denzyl\Result\Result;
-use Denzyl\Result\ResultInterface;
-use Denzyl\Result\Bag;
+use Result\Result;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The test for the result error handeling.
- * @link https://google.com
  */
 class ResultTest extends TestCase
 {
@@ -20,41 +14,55 @@ class ResultTest extends TestCase
      */
     public function testResult(): void
     {
-        $suspect = new Suspect();
+        $client = new Client();
 
-        $message = match ($suspect->fetch()) {
-            R::Ok => R::Ok->grab(),
-            R::Error => function () {
-                $response = R::Error->grab();
-                var_dump($response, "null");
-                return "helloworld";
+        $amount = match ($client->get()) {
+            Result::Ok => (new OrderService())->handle(Result::Ok->collect()),
+            Result::Error => function () {
+                return 0;
             }
         };
 
-        $actual = "helloworld";
-        $expected = $message();
-
-        $this->assertEquals($expected, $actual);
+        $actual = "Hello world";
+        $this->assertEquals($amount, $actual);
     }
-}
 
-class Suspect implements Item
-{
     /**
+     * Test the result error handling.
      *
+     * @return void
      */
-    public function fetch(): R
+    public function testIgnoreException(): void
     {
-        return Result::bag($this);
+        $client = new Client();
+
+        $amount = match ($client->get()) {
+            Result::Ok => (new OrderService())->handle(Result::Ok->collect()),
+            Result::Error => function () {
+                return 0;
+            }
+        };
+
+        $actual = 0;
+        $this->assertEquals($amount, $actual);
     }
 
-
-    /**
-     * @throws Exception
-     */
-    public function baggable()
+    public function testException()
     {
-        throw new Exception("Helloworld frmo exception");
-        return new ArrayObject([]);
+        $client = new Client();
+
+        $client::$amount = 5;
+
+        $error = match ($client->get()) {
+            Result::Ok => function () {
+
+            },
+            Result::Error => function () {
+                return new OrderException(Result::Error->collect());
+            }
+        };
+
+        $message = "Dummy Exception.";
+        $this->assertEquals($message, $error->getMessage());
     }
 }

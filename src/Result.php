@@ -2,24 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Denzyl\Result;
+namespace Result;
 
 use Exception;
 
-class Result
+/**
+ *
+ */
+enum Result
 {
-    /**
-     * @todo add more ways to detect errors when calling a method.
-     * @param Item $bag
-     * @return R
-     */
-    public static function bag(Item $bag): R
+    case Ok;
+
+    case Error;
+
+    public function hold(object $object): self
     {
-        try {
-            $value = $bag->baggable();
-            return R::Ok->hold($value);
-        } catch (Exception $exception) {
-            return R::Error->hold($exception);
-        }
+        $hash = spl_object_hash($object);
+        Hold::$map[$hash] = [];
+        Hold::$map[$hash] = $object;
+        return $this;
+    }
+
+    /**
+     * Collect the real object from the bag.
+     * @return Exception
+     */
+    public function exception(): Exception
+    {
+        return Hold::pop();
+    }
+
+    /**
+     */
+    public function collect(): object
+    {
+        return Hold::pop();
     }
 }

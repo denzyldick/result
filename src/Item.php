@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Denzyl\Result;
+namespace Result;
 
 interface Item
 {
-    public function baggable();
+    public function grab();
 }
