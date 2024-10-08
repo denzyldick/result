@@ -6,7 +6,7 @@ It kind of replaces the try/catch keyword when calling a method. If there are er
 
 <?php
 /// Passing a bag as a return so that you make it mandatory to handle the error.
-return Purse::put($item); \*
+return Purse::put($item);
 /// Calling a method that returns a Result Enum.
 match (method_call()){
 case Result::Ok => other_function(),
